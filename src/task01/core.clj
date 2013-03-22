@@ -2,17 +2,24 @@
   (:require [pl.danieljanus.tagsoup :refer :all])
   (:gen-class))
 
+(defn get-ref [param]
+  (if (= (get param 1) {:class "r"})
+    (:href (get (get param 2) 1))
+    ))
+
 (defn foo [param]
    (loop [head (first param)
           body (next param)
           res []]
-
      (if (empty? body)
        res
-       (do
-         (if (= (get head 1) {:class "r"})
-           (conj res (:href (get (get head 2) 1))))
-         (recur (first body) (next body) res)))))
+       (do         
+         (recur 
+          (first body) 
+          (next body) 
+          (conj res (get-ref head)))))))
+   
+
 
 (defn get-links []
   (let [data (parse "clojure_google.html")]
